@@ -1,0 +1,94 @@
+<html>
+	<noscript>
+		</br><h1>No Javascript, no demo!</h1></br>
+		<img src="../../data/3rdparty/javascriptDisabled.png" alt="Javascript is disabled in your browser" />
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+		</br><h1>No Javascript, no demo!</h1></br>
+	</noscript>
+	<head>	
+		<!-- Engine scripts -->
+		<script type="text/javascript" src="js/engine/jsLoader.js"></script>		
+		<script type="text/javascript" src="js/engine/ResourceManager.js"></script>
+		<script type="text/javascript" src="js/engine/QuadMesh.js"></script>
+		<script type="text/javascript" src="js/engine/Text2d.js"></script>
+		<script type="text/javascript" src="js/engine/Engine.js"></script>
+		<script type="text/javascript" src="js/engine/ShaderLoader.js"></script>
+		<script type="text/javascript" src="js/engine/Texture.js"></script>
+		<script type="text/javascript" src="js/3rdParty/j3di/j3dimath.js"></script>
+		<script type="text/javascript" src="js/engine/QuadPool.js"></script>
+		<script type="text/javascript" src="js/engine/Interpolator.js"></script>
+	
+		<!-- Demo script -->
+		<script type="text/javascript" src="js/fx/parallax/RaymarchParallaxInterpolators.js"></script>
+		<script type="text/javascript" src="js/LightInDarkness.js"></script>
+	</head>
+
+	<style>
+		@font-face {
+			font-family: "JSGL";
+			src: url("data/3rdparty/amiga4ever.ttf");
+		}
+	</style>
+
+	<body onkeydown="engine.keyDown(event.keyCode);">
+		<div id="start" style="position:fixed;z-index:0;left:0px; top:0px; width:100%; height: 100%; z-index=902; font-family:JSGL; background-color:#0055AD; color:#f3ffff; overflow:auto" >
+			<center><img src="data/TheDeadliners.png" width="70%"></center>
+			<br><center><h1>68000 REASONS</h1></center>
+			<div id='f11key'><br><center><i>Please switch to fullscreen (f11 key) and press Start!</i></center></div>
+			<br><br><br><center><button style="background-color:#116cba; color:#f3ffff; font-family:JSGL;" onclick="document.getElementById('canvas_div').style.display='block'; document.getElementById('start').style.display='none'; document.getElementById('start').style.cursor='none'; demoInit();"><h1>Start</h1></button></center>
+		</div>
+		<div id="endScroll" style="JSGL: Dummy text to load font; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-image: -webkit-linear-gradient(rgba(226,241,248,0), rgba(226,241,248,255), rgba(226,241,248,255), rgba(226,241,248,0)); position:fixed;z-index:100; top:0px;display:none; left-margin: auto; right-margin:0px; left:auto; right:0px; width:45%; overflow:hidden" >
+		</div>
+		<div id="canvas_div" style="JSGL: Dummy text to load font;position:fixed;z-index:0;left:0px; top:0px; display:none; cursor:none;">
+			<canvas id="canvas2d" width=800 height=600 style="z-index: 2; position:absolute; left:0px; top:0px;">
+            </canvas>
+			<canvas id="canvas3d" width=800 height=600 style="z-index: 1; position:absolute; left:0px; top:0px;">
+            </canvas>
+			<canvas id="spritesCanvas" width=800 height=600 style="z-index: 3; position:absolute; left:0px; top:0px;">
+            </canvas>
+			<canvas id="frontCanvas" width=800 height=600 style="z-index: 4; position:absolute; left:0px; top:0px;">
+            </canvas>
+			<canvas id="Text2TextureCanvas" width=2 height=2 style="z-index: 0; position:absolute; left:0px; top:0px; display:none">
+            </canvas>
+		</div>		
+		<script>
+			STARTIME = 0.0;
+			
+				
+			function webgl_support() { 
+			   try{
+				var canvas = document.createElement( 'canvas' ); 
+				return !! window.WebGLRenderingContext && ( 
+					 canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) );
+			   }catch( e ) { return false; } 
+			 };
+			 
+			 if (!webgl_support()){
+			   document.getElementById('mainDiv').style.visibility='hidden';
+			   var elem = document.createElement("customdiv");
+			   elem.id = 'myCustomDivID';
+			   elem.innerHTML = '</br><h1>No WebGL, no demo!</h1> </br> <h3>- Not using Chrome? Try Chrome!</h3> </br> <h3>- Try closing and re-opening your browser</h3> </br> <h3>- Using Safari on Mac? WebGL must be enabled (disabled by default). Open the Safari menu and select Preferences. Then, click the Advanced tab in the Preferences window. Then, at the bottom of the window, check the Show Develop menu in menu bar checkbox. Then, open the Develop menu in the menu bar and select Enable WebGL.</h3> </br> <h3>- Using iOS? No WebGL, game over!</h3> </br> <h3>- Try <a href="http://get.webgl.org/troubleshooting"> WebGL troubleshooting </a> </h3></br></br></br>'; 
+			   document.body.insertBefore(elem,document.body.childNodes[0]);
+			 }
+
+			var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+			if (!is_chrome) {
+			   var elem = document.createElement("customdiv");
+			   elem.id = 'myCustomDivID';
+			   elem.innerHTML = '</br><h1>You are not using Chrome! Only Chrome guarantees a good frame-rate and full compatibility with this demo</h1> </br>'; 
+			   document.body.insertBefore(elem,document.body.childNodes[0]);
+			   alert("You are not using Chrome! Only Chrome guarantees a good frame-rate and full compatibility with this demo");
+			}	
+
+			var mac=navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i)?true:false;
+			if (mac) {
+				document.getElementById('f11key').innerHTML = "<br><center><i>Please switch to fullscreen (Command-Shift-F) and press Start!</i></center>";
+			}
+		 </script>
+ </body>
+</html>
